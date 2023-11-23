@@ -6,21 +6,23 @@ import java.util.InputMismatchException;
 
 public class Phonebook {
 	public static Scanner input = new Scanner(System.in);
-	public static LinkedList<Contact> contacts = new LinkedList<Contact>();
-	public static LinkedList<Event> events = new LinkedList<Event>();
+	//public static LinkedList<Contact> contacts = new LinkedList<Contact>();
+	//public static LinkedList<Event> events = new LinkedList<Event>();
+	public static BST<Contact> contacts = new BST<Contact>();
+	public static BST<Event> events = new BST<Event>();
 	static Integer choice;
 	static String enteredName;
 	static String entetedPhoneNumber;
 	static String enteredEmailAddress;
 	static String enteredAddress;
 	static Date enteredBirthday;
-
+	
 	public static void addContact() {
 		System.out.print("Enter contact\'s name: ");
 		Contact newContact = new Contact();
 		input.nextLine();
 		newContact.name = input.nextLine();
-		if (!contacts.empty() && contacts.search(newContact)) {
+		if (contacts.findkey(newContact.name)) {
 			System.out.println("Contact found!");// contact already exists
 			System.out.println(contacts.retrieve().toString());
 			return;
@@ -36,15 +38,22 @@ public class Phonebook {
 			}
 		}
 		if (!contacts.empty()) {
-			contacts.findFirst();
-			for (int i = 0; i < contacts.size; i++) {// n
-				if (contacts.retrieve().phonenumber.compareTo(newContact.phonenumber) == 0) {// n-1
-					System.out.println("Contact found!");
-					System.out.println(contacts.retrieve().toString());
-					return;
-				}
-				contacts.findNext();
+			if(contacts.findNumber(newContact.phonenumber)){
+				System.out.println("Contact found!");
+				System.out.println(contacts.retrieve().toString());
+				return;
 			}
+				
+			// for (int i = 0; i < contacts.size; i++) {// n
+			// 	if (contacts.retrieve().phonenumber.compareTo(newContact.phonenumber) == 0) {// n-1
+			// 		System.out.println("Contact found!");
+			// 		System.out.println(contacts.retrieve().toString());
+			// 		return;
+			// 	}
+			// 	contacts.findNext();
+			// }
+
+
 		}
 		System.out.print("Enter the contact's email address: ");
 		input.nextLine();
@@ -62,21 +71,23 @@ public class Phonebook {
 		}
 		System.out.print("Enter any notes for the contact: ");
 		newContact.notes = input.nextLine();
-		contacts.insertSort(newContact);
+		//contacts.insertSort(newContact);
+		contacts.insert(newContact.name, newContact);
 		System.out.println();
 		System.out.println("Contact added successfully!");
 	}
 
-	public static void ScheduleEvent() {
+	public static void ScheduleEvent(boolean appointment) {
 		Contact desiredContact = new Contact();
 		Event newEvent = new Event();
+		newEvent.appointment = appointment;
 		boolean oldEvent = false;
 		System.out.print("Enter event title: ");
 		input.nextLine();
 		newEvent.title = input.nextLine();
 		System.out.print("Enter contact name: ");
 		desiredContact.name = input.nextLine();
-		if (contacts.search(desiredContact)) {
+		if (contacts.findkey(desiredContact.name)) {
 			desiredContact = contacts.retrieve();
 			while (true) {
 				System.out.print("Enter event date and time (MM/DD/YYYY HH:MM): ");
@@ -91,23 +102,27 @@ public class Phonebook {
 			newEvent.location = input.nextLine();
 			if (desiredContact.addEvent(newEvent)) {
 				// adds the new event to the contact
-				contacts.update(desiredContact);
-				if (!events.empty() && events.search(newEvent)) {
+				contacts.update(desiredContact.name,desiredContact);
+				if (events.findkey(newEvent.title)) {
 					Event tmpEvent = events.retrieve();
 					if ((tmpEvent.date.compareTo(newEvent.date) == 0)
 							&& (tmpEvent.location.compareTo(newEvent.location) == 0)) {
-						tmpEvent.contactNames.insertSort(desiredContact.name);
-						events.update(tmpEvent);
+								if(tmpEvent.appointment||newEvent.appointment){
+									System.out.println("conflict");
+									return;
+								}
+						tmpEvent.contactNames.insert(desiredContact.name,desiredContact.name);
+						events.update(tmpEvent.title,tmpEvent);
 						//
-						desiredContact.events.insertSort(tmpEvent);
-						contacts.update(desiredContact);
+						desiredContact.events.insert(tmpEvent.title, tmpEvent);
+						contacts.update(desiredContact.name,desiredContact);
 						// awdawd
 						oldEvent = true;
 					}
 				}
 				if (!oldEvent) {
-					newEvent.contactNames.insertSort(desiredContact.name);
-					events.insertSort(newEvent);
+					newEvent.contactNames.insert(desiredContact.name,desiredContact.name);
+					events.insert(newEvent.title,newEvent);
 				}
 				System.out.println("Event scheduled successfully!   ");
 			} else
@@ -324,10 +339,10 @@ public class Phonebook {
 
 	public static void main(String arg[]) {// 1
 
-		System.out.println("Welcome to the Linked Tree Phonebook!");// 2
+		System.out.println("Welcome to the BST Phonebook!");// 2
 		do {// 3
 			System.out.println("\nPlease choose an option:"// 4
-					+ "\n1.Add a contact\n2.Search for a contact" + "\n3.Delete a contact \n4.Schedule an event"
+					+ "\n1.Add a contact\n2.Search for a contact" + "\n3.Delete a contact \n4.Schedule an event/Appointment"
 					+ "\n5.Print event details\n6.Print contacts by first name"
 					+ "\n7.Print all events alphabetically \n8.Exit");
 
@@ -369,7 +384,12 @@ public class Phonebook {
 					System.out.println("you need to add contacts first!");
 					break;
 				}
-				ScheduleEvent();
+				System.out.println("Enter type:\n1.Event\n2.appointment");
+				choice = input.nextInt();
+				if(choice ==1)
+					ScheduleEvent(false);
+				else if(choice ==2)
+					ScheduleEvent(true);
 				break;
 			case 5:
 				System.out.println("Enter search criteria: ");

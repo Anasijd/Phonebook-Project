@@ -7,50 +7,50 @@ public class Event implements Comparable<Event>  {
     Date date;
     String time;
     String location;
-    LinkedList<String> contactNames;
-    
+    boolean appointment;
+    //LinkedList<String> contactNames;
+    BST<String> contactNames;
     public Event(){ //default constructor
          this.title = " ";
          this.date = null;
          this.time = " ";
          this.location = " ";
-         this.contactNames = new LinkedList<String>();
-        
+         //this.contactNames = new LinkedList<String>();
+        this.contactNames = new BST<String>();
+        appointment = false;
     }
-    public Event(String title, Date date, String time, String location, String contact) {
+    public Event(String title, Date date, String time, String location, String contact,boolean appointment) {
         this.title = title;
         this.date = date;
         this.time = time;
         this.location = location;
-        this.contactNames = new LinkedList<String>();
-        this.contactNames.insertSort(contact);
-        
+        //this.contactNames = new LinkedList<String>();
+        //this.contactNames.insertSort(contact);
+        this.contactNames = new BST<String>();
+        this.contactNames.insert( contact,contact);
+        this.appointment = appointment;
     }
     public boolean addContact(String contact){
-        return contactNames.insertSort(contact);
-            
-        
+        //return contactNames.insertSort(contact);
+        if(!appointment)
+            return contactNames.insert(contact, contact);
+        return false;
 
     }
     public boolean removeContact(String contact){
-        String name = contactNames.remove(contact);//name of contact removed is stored in 'name' 
-        if(name == null)//if name == null there is no contact with that name
-            return false;//returns false no name matches
-        return true;//contact found and remvoed
+        //String name = contactNames.remove(contact);//name of contact removed is stored in 'name'
+        
+         boolean contactRemoved= contactNames.removeKey(contact);
+        if(contactRemoved)//if name == null there is no contact with that name
+            return true;//returns false no name matches
+        return false;//contact found and remvoed
 
     }
     @Override
     public String toString() {
        String str = "\nEvent title: " + title + "\nEvent date and time (MM/DD/YYYY HH:MM) " + date + time + "\nEvent location " + location +"\n"+
         "\nContacts names: ";
-        contactNames.findFirst();
-        for(int i = 0;i<contactNames.size;i++){
-            str += contactNames.retrieve() + "    ";
-
-            contactNames.findNext();
-
-                
-        }
+        contactNames.printAll(null);
         return str;
 
 
