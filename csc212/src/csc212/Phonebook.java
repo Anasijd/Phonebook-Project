@@ -130,6 +130,35 @@ public class Phonebook {
 		} else
 			System.out.println("Contact not found !");
 	}
+	public static void searchFirstName(BSTNode current,String name) 
+	{ 
+	
+		// If node is null, return 
+		if (contacts.current == null) 
+			return; 
+	
+		// If node is leaf node, print its data
+		if (contacts.current.left == null && 
+			contacts.current.right == null&& contacts.current.data.name.split(" ")[0].equalsIgnoreCase(name)) 
+		{ 
+			
+			contacts.current.toString();
+			return; 
+		} 
+		else if(contacts.current.left == null && contacts.current.right == null ){
+			return;
+		}
+	
+		// If left child exists, check for leaf 
+		// recursively 
+		if (contacts.current.left != null) 
+			searchFirstName(contacts.current.left,name); 
+	
+		// If right child exists, check for leaf 
+		// recursively 
+		if (contacts.current.right != null) 
+			searchFirstName(contacts.current.right,name); 
+	} 
 
 	public static void PrintFirstName() {
 		boolean nameNotFound = true;
@@ -141,21 +170,28 @@ public class Phonebook {
 		System.out.print("Enter the first name:");
 		input.nextLine();
 		String firstName = input.nextLine();
-		contacts.findFirst();
-		for (int i = 0; i < contacts.size; i++) {
-			String name = contacts.retrieve().name;
-			// method split divides the string into an array by spaces
-			String fullName[] = name.split(" ");
-			// checks if the entered first name matches the first contact name
-			if (fullName[0].compareToIgnoreCase(firstName) == 0) {
-				System.out.println(contacts.retrieve() + "\n");
-				nameNotFound = false;
-			}
-			contacts.findNext();
-		}
-		if (nameNotFound)
-			System.out.println("First name not found");
-	}
+		contacts.findRoot();
+		searchFirstName(contacts.current, firstName);
+
+	// 	contacts.findFirst();
+	// 	for (int i = 0; i < contacts.size; i++) {
+	// 		String name = contacts.retrieve().name;
+	// 		// method split divides the string into an array by spaces
+	// 		String fullName[] = name.split(" ");
+	// 		// checks if the entered first name matches the first contact name
+	// 		if (fullName[0].compareToIgnoreCase(firstName) == 0) {
+	// 			System.out.println(contacts.retrieve() + "\n");
+	// 			nameNotFound = false;
+	// 		}
+	// 		contacts.findNext();
+	// 	}
+	// 	if (nameNotFound)
+	// 		System.out.println("First name not found");
+	
+
+
+	 }
+
 
 	public static void DeleteContact() {
 		if (!contacts.empty()) {

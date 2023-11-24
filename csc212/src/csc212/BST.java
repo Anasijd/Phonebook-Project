@@ -260,14 +260,17 @@ public boolean findNumber(String number) {
     current = q;
     return false;
 }
+
 //-------------------------------
 public <T extends Date> boolean checkDuplicates(BSTNode<T> node, Set<T> seenData, T targetData) {
+    
     if (node == null) {
         return false;
     }
 
     // Check if current node's data is the target data
     if (node.data.equals(targetData)) {
+        
         return true;
     }
 
@@ -280,7 +283,9 @@ public <T extends Date> boolean checkDuplicates(BSTNode<T> node, Set<T> seenData
 
     // Return true if any subtree has duplicates
     return leftHasDuplicates || rightHasDuplicates;
-} 
+}
+ 
+
 
 
 }
