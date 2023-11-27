@@ -16,6 +16,8 @@ public class Phonebook {
 	static String enteredEmailAddress;
 	static String enteredAddress;
 	static Date enteredBirthday;
+	static boolean contactNotFound;
+	static boolean contactFound;
 	
 	public static void addContact() {
 		System.out.print("Enter contact\'s name: ");
@@ -172,7 +174,7 @@ public class Phonebook {
 		String firstName = input.nextLine();
 		contacts.findRoot();
 		searchFirstName(contacts.current, firstName);
-
+	}
 	// 	contacts.findFirst();
 	// 	for (int i = 0; i < contacts.size; i++) {
 	// 		String name = contacts.retrieve().name;
@@ -190,16 +192,20 @@ public class Phonebook {
 	
 
 
-	 }
+	
 
-
+ 
 	public static void DeleteContact() {
 		if (!contacts.empty()) {
 			Contact enteredContact = new Contact();
 			System.out.print("Enter the contact's name: ");
 			input.nextLine();
 			enteredContact.name = input.nextLine();
-			enteredContact = contacts.remove(enteredContact);
+			//enteredContact = contacts.remove(enteredContact);
+			contacts.findkey(enteredAddress);
+			enteredContact = contacts.retrieve();
+			contacts.removeKey(enteredAddress);
+			//
 			// method remove returns null if it doesn't find the node
 			if (enteredContact == null) {
 				System.out.println("Contact not found!");
@@ -207,21 +213,21 @@ public class Phonebook {
 			}
 			// if the deleted contact has events
 			if (!enteredContact.events.empty()) {
-				enteredContact.events.findFirst();
-				for (int i = 0; i < enteredContact.events.size; i++) {
+				enteredContact.events.findRoot();
+				// for (int i = 0; i < enteredContact.events.size; i++) {
 					Event contactEvents = enteredContact.events.retrieve();
-					if (events.search(contactEvents)) {
+					if (events.findkey(contactEvents.title)) {
 						Event deleted_Contact_Event = events.retrieve();
 						deleted_Contact_Event.removeContact(enteredContact.name);
 						// if the event has no contact remove it
 						if (deleted_Contact_Event.contactNames.empty()) {
-							events.remove(contactEvents);
+							events.removeKey(contactEvents.title);
 							System.out.println("Delete event, No cantact particapate");
 						} else // if the event still has contacts update it
-							events.update(deleted_Contact_Event);
+							events.update(deleted_Contact_Event.title,deleted_Contact_Event);
 					}
-					enteredContact.events.findNext();
-				}
+					// enteredContact.events.findNext();
+				// }
 			}
 			System.out.println("Contact Deleted Successfully !");
 			System.out.println(enteredContact.toString());
@@ -231,24 +237,26 @@ public class Phonebook {
 	}
 
 	public static void printEventByContactName() {
-		boolean contactNotFound = true;
+		 contactNotFound = true;
 		System.out.print("enter contact's name: ");
 		input.nextLine();
 		String contactName = input.nextLine();
+
 		if (!contacts.empty()) {
-			contacts.findFirst();
-			for (int i = 0; i < contacts.size; i++) {
-				if (contacts.retrieve().name.compareTo(contactName) == 0) {// checks for contact
-					Event event = contacts.retrieve().events.retrieve();// stores in Event obj
-					if (!contacts.retrieve().events.empty()) {/* if contact has event it prints */
-						System.out.println(event.toString());/* the event with all contacts */
-						contactNotFound = false;
-					} else {
-						System.out.println("No events found for this contact!");
-					}
-				}
-				contacts.findNext();
-			}
+			contacts.findRoot();
+			//for (int i = 0; i < contacts.size; i++) {
+				findEventBycontact(contacts.current,contactName);
+			// 	if (contacts.retrieve().name.compareTo(contactName) == 0) {// checks for contact
+			// 		Event event = contacts.retrieve().events.retrieve();// stores in Event obj
+			// 		if (!contacts.retrieve().events.empty()) {/* if contact has event it prints */
+			// 			System.out.println(event.toString());/* the event with all contacts */
+			// 			contactNotFound = false;
+			// 		} else {
+			// 			System.out.println("No events found for this contact!");
+			// 		}
+			// 	}
+			// 	contacts.findNext();
+			// }
 			if (contactNotFound)
 				System.out.println("Contact not found!");
 		}
@@ -264,113 +272,72 @@ public class Phonebook {
 			input.nextLine();
 			Event enteredEvent = new Event();
 			enteredEvent.title = input.nextLine();// store the title with event object
-			events.findFirst();
-			boolean eventNotFound = true;
-			for (int i = 0; i < events.size; i++) {// loops through the list
-				if (events.retrieve().title.compareTo(enteredEvent.title) == 0) {// looks for event
-																					// with the
-																					// same title
-					System.out.println("Event found!");
-					System.out.println(events.retrieve().toString());
-					eventNotFound = false;
-					break;
-				}
-				events.findNext();
-			}
+			events.findRoot();
+			
+			boolean eventNotFound = events.findkey(enteredEvent.title);
+			if (!eventNotFound) 
+				events.retrieve().toString();
+			
 			if (eventNotFound)
 				System.out.println("event not found!");
+			// for (int i = 0; i < events.size; i++) {// loops through the list
+			// 	if (events.retrieve().title.compareTo(enteredEvent.title) == 0) {// looks for event
+			// 																		// with the
+			// 																		// same title
+			// 		System.out.println("Event found!");
+			// 		System.out.println(events.retrieve().toString());
+			// 		eventNotFound = false;
+			// 		break;
+			// 	}
+			// 	events.findNext();
+			// }
+			
 		}
 	}
 
 	public static void searchContact() {
-		boolean contactNotFound = true;
-		boolean numberNotFound = true;
-		boolean emailNotFound = true;
-		boolean addressNotFound = true;
-		boolean birthdayNotFound = true;
-		contacts.findFirst();
+		boolean contactFound = false;
+		// contacts.findFirst();
+		contacts.findRoot();
 		do {
 			switch (choice) {
 			case 1:
 				System.out.println("enter contacts name: ");
 				input.nextLine();
 				enteredName = input.nextLine();
-				for (int i = 0; i < contacts.size; i++) {
-					if (contacts.retrieve().name.compareTo(enteredName) == 0) {
-						System.out.println("contact found:\n" + contacts.retrieve());
-						contactNotFound = false;
-						break;
-					}
-					contacts.findNext();
-
+				contactFound = contacts.findkey(enteredName);
+				if(contactFound){
+					contacts.retrieve().toString();
 				}
-				if (contactNotFound)
-					System.out.println("contact not found");
 				break;
 			case 2:
 				System.out.println("enter contact phone number: ");
 				entetedPhoneNumber = input.next();
-				for (int i = 0; i < contacts.size; i++) {
-					if (contacts.retrieve().phonenumber.compareTo(entetedPhoneNumber) == 0) {
-						System.out.println("contact found:\n" + contacts.retrieve());
-						numberNotFound = false;
-						break;
-					}
-					contacts.findNext();
-
-				}
-				if (numberNotFound)
-					System.out.println("contact not found");
+				searchByPhoneNumber(contacts.root, entetedPhoneNumber);
 				break;
 			case 3:
 				System.out.println("enter contact email address: ");
-				int nEmail = 1;
 				enteredEmailAddress = input.next();
-				for (int i = 0; i < contacts.size; i++) {
-					if (contacts.retrieve().email.compareTo(enteredEmailAddress) == 0) {
-						System.out.println(nEmail++ + "-" + contacts.retrieve());
-						emailNotFound = false;
-
-					}
-					contacts.findNext();
-				}
-				if (emailNotFound)
-					System.out.println("contact not found");
+				searchByEmail(contacts.root,enteredEmailAddress);	
 				break;
-
 			case 4:
 				System.out.println("enter contact address: ");
-				int nAddress = 1;
 				enteredAddress = input.next();
-				for (int i = 0; i < contacts.size; i++) {
-					if (contacts.retrieve().address.compareTo(enteredAddress) == 0) {
-						System.out.println(nAddress++ + "-" + contacts.retrieve());
-						addressNotFound = false;
-					}
-					contacts.findNext();
-				}
-				if (addressNotFound)
-					System.out.println("contact not found");
+				searchByAddress(contacts.root, enteredAddress);
 				break;
 			case 5:
 				System.out.println("enter contact birthday: ");
-				int nBirthday = 1;
 				enteredBirthday = new Date(input.next());
-				for (int i = 0; i < contacts.size; i++) {
-					if (contacts.retrieve().birthday.compareTo(enteredBirthday) == 0) {
-						System.out.println(nBirthday++ + "-" + contacts.retrieve());
-						birthdayNotFound = false;
-					}
-					contacts.findNext();
-				}
-				if (birthdayNotFound)
-					System.out.println("contact not found");
+				searchByBirthday(contacts.root, enteredBirthday);
+				
+				
 				break;
 			default:
 				System.out.println("not a choice");
 			}
 		} while (choice > 5 || choice < 1);
-
+		if(!contactFound)
+			System.out.println("contact not found!");
 	}
 
 	public static void main(String arg[]) {// 1
@@ -446,13 +413,8 @@ public class Phonebook {
 			case 7:
 				if (events.empty())// Print all events alphabetically
 					System.out.println("there are no events");
-				else {
-					events.findFirst();
-					for (int i = 0; i < events.size; i++) {
-						System.out.println("-" + events.retrieve().title);// retrieve title and prints it
-						events.findNext();
-					}
-				}
+				events.printAll(events.root);
+				
 				break;
 			case 8:
 				System.out.println("Goodbye");
@@ -464,4 +426,165 @@ public class Phonebook {
 		} while (choice != 8);
 
 	}
+	public static void findEventBycontact(BSTNode<Contact> current,String name) 
+	{ 
+	
+		// If node is null, return 
+		if (contacts.current == null) 
+			return; 
+	
+		// If node is leaf node, print its data
+		if (contacts.current.left == null && 
+			contacts.current.right == null&& contacts.current.data.name.equalsIgnoreCase(name)) 
+		{ 
+			
+			contacts.retrieve().events.toString();
+			contactNotFound = false;
+			// contacts.retrieve().events.printAll(events.root);
+			
+			return; 
+		} 
+		else if(contacts.current.left == null && contacts.current.right == null ){
+			return;
+		}
+	
+		// If left child exists, check for leaf 
+		// recursively 
+		if (contacts.current.left != null) 
+			findEventBycontact(contacts.current.left,name); 
+	
+		// If right child exists, check for leaf 
+		// recursively 
+		if (contacts.current.right != null) 
+			findEventBycontact(contacts.current.right,name); 
+	}
+	public static void searchByPhoneNumber(BSTNode<Contact> current,String phoneNumber) 
+	{ 
+	
+		// If node is null, return 
+		if (contacts.current == null) 
+			return; 
+	
+		// If node is leaf node, print its data
+		if (contacts.current.left == null && 
+			contacts.current.right == null&& contacts.current.data.phonenumber.equalsIgnoreCase(phoneNumber)) 
+		{ 
+			
+			contacts.retrieve().toString();
+			contactFound = true;
+			// contacts.retrieve().events.printAll(events.root);
+			
+			return; 
+		} 
+		else if(contacts.current.left == null && contacts.current.right == null ){
+			return;
+		}
+	
+		// If left child exists, check for leaf 
+		// recursively 
+		if (contacts.current.left != null) 
+			searchByPhoneNumber(contacts.current.left,phoneNumber); 
+	
+		// If right child exists, check for leaf 
+		// recursively 
+		if (contacts.current.right != null) 
+			searchByPhoneNumber(contacts.current.right,phoneNumber); 
+	}
+		public static void searchByEmail(BSTNode<Contact> current,String Email) 
+	{ 
+	
+		// If node is null, return 
+		if (contacts.current == null) 
+			return; 
+	
+		// If node is leaf node, print its data
+		if (contacts.current.left == null && 
+			contacts.current.right == null&& contacts.current.data.email.equalsIgnoreCase(Email)) 
+		{ 
+			
+			contacts.retrieve().toString();
+			contactFound = true;
+			// contacts.retrieve().events.printAll(events.root);
+			
+			return; 
+		} 
+		else if(contacts.current.left == null && contacts.current.right == null ){
+			return;
+		}
+	
+		// If left child exists, check for leaf 
+		// recursively 
+		if (contacts.current.left != null) 
+			searchByEmail(contacts.current.left,Email); 
+	
+		// If right child exists, check for leaf 
+		// recursively 
+		if (contacts.current.right != null) 
+			searchByEmail(contacts.current.right,Email); 
+	}
+	public static void searchByAddress(BSTNode<Contact> current,String Address) 
+	{ 
+	
+		// If node is null, return 
+		if (contacts.current == null) 
+			return; 
+	
+		// If node is leaf node, print its data
+		if (contacts.current.left == null && 
+			contacts.current.right == null&& contacts.current.data.address.equalsIgnoreCase(Address)) 
+		{ 
+			
+			contacts.retrieve().toString();
+			contactFound = true;
+			// contacts.retrieve().events.printAll(events.root);
+			
+			return; 
+		} 
+		else if(contacts.current.left == null && contacts.current.right == null ){
+			return;
+		}
+	
+		// If left child exists, check for leaf 
+		// recursively 
+		if (contacts.current.left != null) 
+			searchByAddress(contacts.current.left,Address); 
+	
+		// If right child exists, check for leaf 
+		// recursively 
+		if (contacts.current.right != null) 
+			searchByAddress(contacts.current.right,Address); 
+	}
+	public static void searchByBirthday(BSTNode<Contact> current,Date Birthday) 
+	{ 
+	
+		// If node is null, return 
+		if (contacts.current == null) 
+			return; 
+	
+		// If node is leaf node, print its data
+		if (contacts.current.left == null && 
+			contacts.current.right == null&& contacts.current.data.birthday.compareTo(Birthday) ==0) 
+		{ 
+			
+			contacts.retrieve().toString();
+			contactFound = true;
+			// contacts.retrieve().events.printAll(events.root);
+			
+			return; 
+		} 
+		else if(contacts.current.left == null && contacts.current.right == null ){
+			return;
+		}
+	
+		// If left child exists, check for leaf 
+		// recursively 
+		if (contacts.current.left != null) 
+			searchByBirthday(contacts.current.left,Birthday); 
+	
+		// If right child exists, check for leaf 
+		// recursively 
+		if (contacts.current.right != null) 
+			searchByBirthday(contacts.current.right,Birthday); 
+	}
+	 
 }

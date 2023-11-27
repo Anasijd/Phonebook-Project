@@ -22,7 +22,7 @@ public class Contact implements Comparable<Contact> {
 		notes = "";
 		//events = new LinkedList<Event>();
 		events = new BST<Event>();
-
+		
 	}
 
 	// Constructor
@@ -35,6 +35,7 @@ public class Contact implements Comparable<Contact> {
 		this.notes = notes;
 		//events = new LinkedList<Event>();
 		events = new BST<Event>();
+		
 	}
 
 	// method for adding events
@@ -60,6 +61,7 @@ public class Contact implements Comparable<Contact> {
         if(events.findkey(event.title))
 			return false;
 		events.insert(event.title, event);
+		
 		return true;
     
 	
@@ -67,6 +69,7 @@ public class Contact implements Comparable<Contact> {
 
     public boolean removeEvent(String title) {
         if (events.findkey(title)) {
+			
             return events.removeKey(title);
         }
         return false;
