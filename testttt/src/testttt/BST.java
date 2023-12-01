@@ -49,6 +49,35 @@ public class BST <T extends Comparable<T>> {
 	        return false;
 	    }
 
+	    
+//	    public void insert(String k, T val) {
+//	        BSTNode newNode = new BSTNode(k, val);
+//
+//	        if (root == null) {
+//	            root = newNode;
+//	            return;
+//	        }
+//
+//	        BSTNode parent = null;
+//	        BSTNode current = root;
+//
+//	        while (current != null) {
+//	            parent = current;
+//
+//	            if (k.compareTo(current.key) < 0) {
+//	                current = current.left;
+//	            } else {
+//	                current = current.right;
+//	            }
+//	        }
+//
+//	        if (k.compareTo(parent.key) < 0) {
+//	            parent.left = newNode;
+//	        } else {
+//	            parent.right = newNode;
+//	        }
+//	    }
+	    
 	    public boolean insert(String k, T val) {
 	        BSTNode<T> p, q = current;
 
@@ -70,6 +99,8 @@ public class BST <T extends Comparable<T>> {
 	            current = p;
 	            return true;
 	        }
+	        
+	        
 	    }
 
 	    // public boolean findkey(int tkey) {
@@ -163,7 +194,7 @@ public class BST <T extends Comparable<T>> {
 	    // }
 
 	    public boolean update(String key, T data) {
-	        removeKey(current.key);
+	        removeKey(key);
 	        return insert(key, data);
 	    }
 
@@ -221,12 +252,13 @@ public class BST <T extends Comparable<T>> {
 	    // If node is null, return 
 	    if (root == null) 
 	        return; 
-
+	   
+	    System.out.print(root.data + "\n");
 	    // If node is leaf node, print its data
 	    if (root.left == null && 
 	        root.right == null) 
 	    { 
-	        System.out.print(root.data + "\n");
+	        
 	        return; 
 	    } 
 

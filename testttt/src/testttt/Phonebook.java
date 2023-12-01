@@ -114,13 +114,15 @@ public class Phonebook {
 								if(tmpEvent.appointment||newEvent.appointment){
 									System.out.println("conflict");
 									return;
-								}
+								}		
+								
+								
 						tmpEvent.contactNames.insert(desiredContact.name,desiredContact.name);
-						events.update(tmpEvent.title,tmpEvent);
-						//
 						desiredContact.events.insert(tmpEvent.title, tmpEvent);
+
+						events.update(tmpEvent.title,tmpEvent);
 						contacts.update(desiredContact.name,desiredContact);
-						// awdawd
+						
 						oldEvent = true;
 					}
 				}
@@ -142,26 +144,24 @@ public class Phonebook {
 			return; 
 	
 		// If node is leaf node, print its data
-		if (contacts.current.left == null && 
-			contacts.current.right == null&& contacts.current.data.name.split(" ")[0].equalsIgnoreCase(name)) 
+		if (((Contact)current.data).name.split(" ")[0].equalsIgnoreCase(name))  
 		{ 
-			
-			System.out.println(contacts.current.toString());
-			return; 
+			System.out.println(((Contact)current.data).toString());
 		} 
-		else if(contacts.current.left == null && contacts.current.right == null ){
+		
+		if(current.left == null && current.right == null ){
 			return;
 		}
 	
 		// If left child exists, check for leaf 
 		// recursively 
-		if (contacts.current.left != null) 
-			searchFirstName(contacts.current.left,name); 
+		if (current.left != null) 
+			searchFirstName(current.left,name); 
 	
 		// If right child exists, check for leaf 
 		// recursively 
-		if (contacts.current.right != null) 
-			searchFirstName(contacts.current.right,name); 
+		if (current.right != null) 
+			searchFirstName(current.right,name); 
 	} 
 
 	public static void PrintFirstName() {
@@ -174,8 +174,7 @@ public class Phonebook {
 		System.out.print("Enter the first name:");
 		input.nextLine();
 		String firstName = input.nextLine();
-		contacts.findRoot();
-		searchFirstName(contacts.current, firstName);
+		searchFirstName(contacts.root, firstName);
 	}
 	// 	contacts.findFirst();
 	// 	for (int i = 0; i < contacts.size; i++) {
@@ -277,9 +276,10 @@ public class Phonebook {
 			events.findRoot();
 			
 			boolean eventFound = events.findkey(enteredEvent.title);
-			if (eventFound) 
+			if (eventFound) {
 				System.out.println(events.retrieve().toString());
-			
+				//current.data.events.retrieve().contactNames.printAll(current.data.events.retrieve().contactNames.root);
+			}
 			if (!eventFound)
 				System.out.println("event not found!");
 			// for (int i = 0; i < events.size; i++) {// loops through the list
@@ -449,41 +449,73 @@ public class Phonebook {
 		} while (choice != 8);
 
 	}
-	public static void findEventBycontact(BSTNode<Contact> current,String name) 
+//	public static void findEventBycontact(BSTNode<Contact> current,String name) 
+//	{ 
+//	
+//		// If node is null, return 
+//		if (contacts.current == null) 
+//			return; 
+//	if(contacts.current.data.name.equalsIgnoreCase(name)) {
+//		contactNotFound = false;
+//		BST<Event> foundEvent = contacts.retrieve().events;
+//		foundEvent.findRoot();
+//		foundEvent.printAll(events.current);
+//		foundEvent.retrieve().contactNames.findRoot();
+//		//foundEvent.retrieve().contactNames.printAll(foundEvent.retrieve().contactNames.current);
+//		return;
+//		
+//	}
+//		if (contacts.current.left == null && 
+//			contacts.current.right == null ) 
+//		{ 
+//			
+//			
+//			return; 
+//		} 
+//		
+//	
+//		// If left child exists, check for leaf 
+//		// recursively 
+//		if (contacts.current.left != null) 
+//			findEventBycontact(contacts.current.left,name); 
+//	
+//		// If right child exists, check for leaf 
+//		// recursively 
+//		if (contacts.current.right != null) 
+//			findEventBycontact(contacts.current.right,name); 
+//	}
+	//--------------------------------------------------
+	
+	static void findEventBycontact(BSTNode<Contact> current,String name) 
 	{ 
+
+	    // If node is null, return 
+	    if (current == null) 
+	        return; 
+	    if(current.data.name.equalsIgnoreCase(name)) {
+	    	current.data.events.printAll(current.data.events.root);
+	        contactNotFound = false;
+	    }
+	    // If node is leaf node, print its data
+	    if (current.left == null && 
+	    		current.right == null) 
+	    { 
+	        return; 
+	    } 
+
+	    // If left child exists, check for leaf 
+	    // recursively 
+	    if (current.left != null) 
+	    	findEventBycontact(current.left, name); 
+
+	    // If right child exists, check for leaf 
+	    // recursively 
+	    if (current.right != null) 
+	    	findEventBycontact(current.right, name); 
+	} 
 	
-		// If node is null, return 
-		if (contacts.current == null) 
-			return; 
 	
-		// If node is leaf node, print its data
-		if (contacts.current.left == null && 
-			contacts.current.right == null&& contacts.current.data.name.equalsIgnoreCase(name)) 
-		{ 
-			
-			// System.out.println(contacts.retrieve().events.toString());
-			contactNotFound = false;
-			BST<Event> foundEvent = contacts.retrieve().events;
-			foundEvent.findRoot();
-			foundEvent.printAll(events.current);
-			foundEvent.retrieve().contactNames.findRoot();
-			foundEvent.retrieve().contactNames.printAll(contacts.retrieve().events.retrieve().contactNames.current);
-			return; 
-		} 
-		else if(contacts.current.left == null && contacts.current.right == null ){
-			return;
-		}
-	
-		// If left child exists, check for leaf 
-		// recursively 
-		if (contacts.current.left != null) 
-			findEventBycontact(contacts.current.left,name); 
-	
-		// If right child exists, check for leaf 
-		// recursively 
-		if (contacts.current.right != null) 
-			findEventBycontact(contacts.current.right,name); 
-	}
+	//--------------------------------------------------
 	public static void searchByPhoneNumber(BSTNode<Contact> current,String phoneNumber) 
 	{ 
 	

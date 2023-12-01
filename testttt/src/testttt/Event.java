@@ -12,6 +12,7 @@ public class Event implements Comparable<Event>  {
     boolean appointment;
     //LinkedList<String> contactNames;
     BST<String> contactNames;
+    
     public Event(){ //default constructor
          this.title = " ";
          this.date = null;
@@ -50,13 +51,45 @@ public class Event implements Comparable<Event>  {
     }
     @Override
     public String toString() {
-       String str = "\nEvent title: " + title + "\nEvent date and time (MM/DD/YYYY HH:MM) " + date + time + "\nEvent location " + location +"\n"+
-        "\nContacts names: ";
-       contactNames.findRoot();
-        contactNames.printAll(contactNames.current);
+       String str = ((appointment)? "\n Appointment" : " \nEvent") + " title: " + title + "\nEvent date and time (MM/DD/YYYY HH:MM) " + date + time + "\nEvent location " + location +"\n"+
+        "\nContacts names: " + inOrderTraversalToString(contactNames.root);
+
         return str;
 
 
+    }
+    public String inOrderTraversalToString(BSTNode node) {
+        StringBuilder sb = new StringBuilder();
+        tooString(node, sb);
+        return sb.toString();
+    }
+    public void tooString(BSTNode root, StringBuilder sb) {
+//      contactNames.findRoot();
+//      contactNames.printAll(contactNames.current);
+
+	    // If node is null, return 
+	    if (root == null) 
+	        return; 
+	   
+	    sb.append(root.data + " ");
+	    // If node is leaf node, print its data
+	    if (root.left == null && 
+	        root.right == null) 
+	    { 
+	        
+	        return; 
+	    } 
+
+	    // If left child exists, check for leaf 
+	    // recursively 
+	    if (root.left != null) 
+	    	tooString(root.left, sb); 
+
+	    // If right child exists, check for leaf 
+	    // recursively 
+	    if (root.right != null) 
+	    	tooString(root.right, sb); 
+      
     }
     public int compareTo(Event obj) {  
         try {  
